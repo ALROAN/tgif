@@ -1,5 +1,7 @@
 let fetchUrl;
 let members;
+// ----------------------------------------------------------
+//decide la url del fetch dependiendo del html en el que esta.
 
 function decidePage() {
   if (
@@ -21,7 +23,9 @@ function decidePage() {
   }
 }
 decidePage();
-
+// --------------------------------------------------------
+// decide que functions llamar desde el fech
+// en base a la id de cada html.
 function decideFetch(fetchUrl) {
   fetch(fetchUrl, {
     method: "GET",
@@ -38,11 +42,47 @@ function decideFetch(fetchUrl) {
       hideLoader(); //funcion desaparece el loader
 
       if (document.getElementById("senateLoyalty")) {
+        findNumberVotes(members);
+        findTotalVotesPartyPct(members);
+        findTotalVotesPct(statistics);
+        findleastLoyal(members);
+        findmostLoyal(members);
+        createSenateGlace(statistics);
+        createLeastLoyal(statistics.leastLoyal);
+        createMostLoyal(statistics.mostLoyal);
       } else if (document.getElementById("senateAttendance")) {
+        findNumberVotes(members);
+        findTotalVotesPartyPct(members);
+        findTotalVotesPct(statistics);
+        createSenateGlace(statistics);
+        findleastEngaged(members);
+        findmostEngaged(members);
+        createLeastEngaged(statistics.leastEngaged);
+        createMostEngaged(statistics.mostEngaged);
       } else if (document.getElementById("senateStarter")) {
+        dropDown();
+        superFilter();
       } else if (document.getElementById("houseLoyalty")) {
+        findNumberVotes(members);
+        findTotalVotesPartyPct(members);
+        findTotalVotesPct(statistics);
+        findleastLoyal(members);
+        findmostLoyal(members);
+        createSenateGlace(statistics);
+        createLeastLoyal(statistics.leastLoyal);
+        createMostLoyal(statistics.mostLoyal);
       } else if (document.getElementById("houseAttendance")) {
+        findNumberVotes(members);
+        findTotalVotesPartyPct(members);
+        findTotalVotesPct(statistics);
+        createSenateGlace(statistics);
+        findleastEngaged(members);
+        findmostEngaged(members);
+        createLeastEngaged(statistics.leastEngaged);
+        createMostEngaged(statistics.mostEngaged);
       } else if (document.getElementById("houseStarter")) {
+        dropDown();
+        superFilter();
       }
     })
 
@@ -52,11 +92,12 @@ function decideFetch(fetchUrl) {
 }
 
 // ----------------------FUNCTIONS-------------------------------
-//funcion desaparece el loader
+//funcion desaparece el loader.
 function hideLoader() {
   document.getElementById("loader").style.display = "none";
 }
 // --------------------DATE FOOTER--------------------------
+// pinta la data actual en el footer de todas las paginas.
 function printDate() {
   var d = new Date();
   document.getElementById("date").innerHTML = d.toDateString();
@@ -64,6 +105,7 @@ function printDate() {
 printDate();
 
 // -----------------HOME-----------------------------------
+// cambia el estado de los botones del collapse de home.
 function collapseText() {
   let buttonMore = document.getElementById("buttonMore");
   let buttonLess = document.getElementById("buttonLess");
@@ -81,7 +123,7 @@ function collapseText() {
 }
 
 //   -----------------------house senate starter-----------------------------
-
+// construye el dropdown de las paginas loyalty y attendance.
 function dropDown() {
   let politicsMembers = Array.from(members);
   let states = [];
@@ -100,17 +142,19 @@ function dropDown() {
     uniqueStatesMenu.append(stateItem);
   }
 }
-dropDown();
-
-let checkboxRepublicans = document.getElementById("defaultInline1");
-let checkboxDemocrats = document.getElementById("defaultInline2");
-let checkboxIndependents = document.getElementById("defaultInline3");
-checkboxRepublicans.addEventListener("click", superFilter, false);
-checkboxDemocrats.addEventListener("click", superFilter, false);
-checkboxIndependents.addEventListener("click", superFilter, false);
-uniqueStatesMenu.addEventListener("change", superFilter, false);
-
+// ------------------------------------------------------------------------
+// pone filtro a las paginas congress 113.
 function superFilter() {
+  let uniqueStatesMenu = document.getElementById("uniqueStatesMenu");
+
+  let checkboxRepublicans = document.getElementById("defaultInline1");
+  let checkboxDemocrats = document.getElementById("defaultInline2");
+  let checkboxIndependents = document.getElementById("defaultInline3");
+  checkboxRepublicans.addEventListener("click", superFilter, false);
+  checkboxDemocrats.addEventListener("click", superFilter, false);
+  checkboxIndependents.addEventListener("click", superFilter, false);
+  uniqueStatesMenu.addEventListener("change", superFilter, false);
+
   let checkboxes = document.querySelectorAll(".checkbox");
   let checkboxValue = [];
 
@@ -154,8 +198,8 @@ function superFilter() {
   // aquí decimos que si la tabla esta vacia se muestre el
   //  mensaje de alerta, sino pinta la tabla normal
 }
-superFilter();
-
+// --------------------------------------------------------------------------
+// crea la tabla en base al resultado de superfilter()
 function buildTable(filtrateMembers) {
   let tblBody = document.getElementById("tblbody");
   tblBody.innerHTML = "";
@@ -199,10 +243,9 @@ function buildTable(filtrateMembers) {
   }
 }
 
-// ------------------------------attendance  loyal------------------------------
-
-let uniqueStatesMenu = document.getElementById("uniqueStatesMenu");
-
+// ------------------------------attendance  loyalattendance  loyal------------------------------
+// objeto con las propiedades necesarias para construir las tablas
+// de attendance y loyalty.
 let statistics = {
   numberOfDemocrats: 0,
   numberOfRepublicans: 0,
@@ -220,6 +263,8 @@ let statistics = {
 };
 
 // --------------------------------------------------------------
+// obtenemos los valores de number de cada partido, votes de cada
+// partido y totalVotesPolitics.
 function findNumberVotes(array) {
   for (let i = 0; i < array.length; i++) {
     if (array[i].party === "R") {
@@ -253,27 +298,24 @@ function findNumberVotes(array) {
   //   console.log(votesDemocrats, votesRepublicans, votesIndependents);
 }
 
-findNumberVotes(members);
-
 // ----------------------------------------------------------
-
+// obtenemos el valor de totalVotesPartyPct
 function findTotalVotesPartyPct(array) {
   for (let i = 0; i < array.length; i++) {
     statistics.totalVotesPartyPct += array[i].votes_with_party_pct;
   }
 }
 
-findTotalVotesPartyPct(members);
 // ---------------------------------------------------------
+// obtenemos el valor de totalVotesPct
 
 function findTotalVotesPct(array) {
   array.totalVotesPct = array.totalVotesPartyPct / array.totalVotesPolitics;
   array.totalVotesPct = Math.round(array.totalVotesPct);
 }
-findTotalVotesPct(statistics);
 
 // -------------------------------------------------------------------
-
+// sirve para ordenar la funcion de forma numerica con un .sort
 function compare(a, b) {
   if (a.votes_with_party_pct < b.votes_with_party_pct) {
     return -1;
@@ -283,6 +325,7 @@ function compare(a, b) {
   }
   return 0;
 }
+// obtenemos el valor de leastLoyal
 
 function findleastLoyal(array) {
   let sorted = Array.from(array).sort(compare);
@@ -297,12 +340,10 @@ function findleastLoyal(array) {
       statistics.leastLoyal.push(sorted[j]);
     }
   }
-  console.log(statistics.leastLoyal);
 }
 
-findleastLoyal(members);
-
 // ---------------------------------------------------------------------
+// sirve para ordenar la funcion de forma numerica con un .sort
 
 function compareLeast(a, b) {
   if (a.missed_votes_pct < b.missed_votes_pct) {
@@ -313,6 +354,7 @@ function compareLeast(a, b) {
   }
   return 0;
 }
+// obtenemos el valor de leastEngaged
 
 function findleastEngaged(array) {
   let sorted = Array.from(array).sort(compareLeast);
@@ -330,9 +372,8 @@ function findleastEngaged(array) {
   console.log(statistics.leastEngaged);
 }
 
-findleastEngaged(members);
-
 //   ----------------------------------------------------------------
+// sirve para ordenar la funcion de forma numerica con un .sort
 
 function compareTop(a, b) {
   if (a.votes_with_party_pct > b.votes_with_party_pct) {
@@ -343,6 +384,7 @@ function compareTop(a, b) {
   }
   return 0;
 }
+// obtenemos el valor de mostLoyal
 
 function findmostLoyal(array) {
   let sorted = Array.from(array).sort(compareTop);
@@ -360,36 +402,9 @@ function findmostLoyal(array) {
   console.log(statistics.mostLoyal);
 }
 
-findmostLoyal(members);
-
-//   -----------------------------------------------------------------------------
-
-function compareTop(a, b) {
-  if (a.votes_with_party_pct > b.votes_with_party_pct) {
-    return -1;
-  }
-  if (a.votes_with_party_pct < b.votes_with_party_pct) {
-    return 1;
-  }
-  return 0;
-}
-
-function findmostLoyal(array) {
-  let sorted = Array.from(array).sort(compareTop);
-  for (let i = 0; i < sorted.length * 0.1; i++) {
-    statistics.mostLoyal.push(sorted[i]);
-  }
-  for (let j = statistics.mostLoyal.length; j < sorted.length; j++) {
-    if (
-      sorted[j].votes_with_party_pct ===
-      statistics.mostLoyal[statistics.mostLoyal.length - 1].votes_with_party_pct
-    ) {
-      statistics.mostLoyal.push(sorted[j]);
-    }
-  }
-  console.log(statistics.mostLoyal);
-}
 // -----------------------------------------------------------------------
+// sirve para ordenar la funcion de forma numerica con un .sort
+
 function compareTopEngaged(a, b) {
   if (a.missed_votes_pct > b.missed_votes_pct) {
     return -1;
@@ -399,6 +414,7 @@ function compareTopEngaged(a, b) {
   }
   return 0;
 }
+// obtenemos el valor de mostEngaged
 
 function findmostEngaged(array) {
   let sorted = Array.from(array).sort(compareTopEngaged);
@@ -416,17 +432,170 @@ function findmostEngaged(array) {
   console.log(statistics.mostEngaged);
 }
 
-findmostEngaged(members);
+//   -------------------------------------------------------------------------
+// crea la tabla glance de attendance y loyalty
+function createSenateGlace(array) {
+  let tBodyId = document.getElementById("Glase");
+  let hilera1 = document.createElement("tr");
+  let hilera2 = document.createElement("tr");
+  let hilera3 = document.createElement("tr");
+  let hilera4 = document.createElement("tr");
+  let cell1 = document.createElement("td");
+  let cell2 = document.createElement("td");
+  let cell3 = document.createElement("td");
+  let cell4 = document.createElement("td");
+  let cell5 = document.createElement("td");
+  let cell6 = document.createElement("td");
+  let cell7 = document.createElement("td");
+  let cell8 = document.createElement("td");
+  let cell9 = document.createElement("td");
+  let cell10 = document.createElement("td");
+  let cell11 = document.createElement("td");
+  let cell12 = document.createElement("td");
+
+  cell1.innerHTML = "Democrats";
+  cell2.innerHTML = array.numberOfDemocrats;
+  cell3.innerHTML = array.votesDemocrats + " %";
+  cell4.innerHTML = "Republicans";
+  cell5.innerHTML = array.numberOfRepublicans;
+  cell6.innerHTML = array.votesRepublicans + " %";
+  cell7.innerHTML = "Independents";
+  cell8.innerHTML = array.numberOfIndependents;
+  cell9.innerHTML = array.votesIndependents + " %";
+  cell10.innerHTML = "Total";
+  cell11.innerHTML = array.totalVotesPolitics;
+  cell12.innerHTML = array.totalVotesPct + " %";
+  tBodyId.append(hilera1, hilera2, hilera3, hilera4);
+  hilera1.append(cell1, cell2, cell3);
+  hilera2.append(cell4, cell5, cell6);
+  hilera3.append(cell7, cell8, cell9);
+  hilera4.append(cell10, cell11, cell12);
+}
 
 //   -------------------------------------------------------------------------
+// crea la tabla Least Loyal de loyalty
+
+function createLeastLoyal(array) {
+  let tBody = document.getElementById("leastLoyal");
+  for (let i = 0; i < array.length; i++) {
+    let hilera = document.createElement("tr");
+    let name = document.createElement("td");
+    let numberPartyVotes = document.createElement("td");
+    let tpcVotesParty = document.createElement("td");
+    let fullNameLink = document.createElement("a");
+
+    name.innerHTML =
+      (array[i].first_name || "") +
+      " " +
+      (array[i].last_name || "") +
+      " " +
+      (array[i].middle_name || "");
+
+    numberPartyVotes.innerHTML = Math.round(
+      (array[i].total_votes / 100) * array[i].votes_with_party_pct
+    );
+    tpcVotesParty.innerHTML = array[i].votes_with_party_pct + " %";
+
+    let ref = document.createAttribute("href");
+    ref.value = array[i].url;
+    fullNameLink.setAttributeNode(ref);
+    fullNameLink.setAttribute("target", "_blank");
+
+    name.append(fullNameLink);
+    hilera.append(name, numberPartyVotes, tpcVotesParty);
+    tBody.append(hilera);
+  }
+}
 //   -------------------------------------------------------------------------
+// crea la tabla Most Loyal de loyalty
+
+function createMostLoyal(array) {
+  let tBodyId = document.getElementById("mostLoyal");
+  for (let i = 0; i < array.length; i++) {
+    let hilera = document.createElement("tr");
+    let name = document.createElement("td");
+    let numberPartyVotes = document.createElement("td");
+    let tpcMissed = document.createElement("td");
+
+    name.innerHTML =
+      (array[i].first_name || "") +
+      " " +
+      (array[i].last_name || "") +
+      " " +
+      (array[i].middle_name || "");
+
+    numberPartyVotes.innerHTML = Math.round(
+      (array[i].total_votes / 100) * array[i].votes_with_party_pct
+    );
+
+    tpcMissed.innerHTML = array[i].votes_with_party_pct + " %";
+    hilera.append(name, numberPartyVotes, tpcMissed);
+    tBodyId.append(hilera);
+  }
+}
+
 //   -------------------------------------------------------------------------
+// crea la tabla Least Engaged de attendance
+
+function createLeastEngaged(array) {
+  let tBodyId = document.getElementById("leastEngaged");
+  for (let i = 0; i < array.length; i++) {
+    let hilera = document.createElement("tr");
+    let name = document.createElement("td");
+    let missedVotes = document.createElement("td");
+    let tpcMissed = document.createElement("td");
+    let fullNameLink = document.createElement("a");
+
+    name.innerHTML =
+      (array[i].first_name || "") +
+      " " +
+      (array[i].last_name || "") +
+      " " +
+      (array[i].middle_name || "");
+
+    missedVotes.innerHTML = array[i].missed_votes;
+    tpcMissed.innerHTML = array[i].missed_votes_pct;
+
+    let ref = document.createAttribute("href");
+    ref.value = array[i].url;
+    fullNameLink.setAttributeNode(ref);
+    fullNameLink.setAttribute("target", "_blank");
+    name.append(fullNameLink);
+
+    tBodyId.append(hilera);
+    hilera.append(name, missedVotes, tpcMissed);
+  }
+}
+
 //   -------------------------------------------------------------------------
-//   -------------------------------------------------------------------------
-//   -------------------------------------------------------------------------
-//   -------------------------------------------------------------------------
-//   -------------------------------------------------------------------------
-//   -------------------------------------------------------------------------
-//   -------------------------------------------------------------------------
-//   -------------------------------------------------------------------------
-//   -------------------------------------------------------------------------
+// crea la tabla Most Engaged de attendance
+
+function createMostEngaged(array) {
+  let tBodyId = document.getElementById("mostEngaged");
+  for (let i = 0; i < array.length; i++) {
+    let hilera = document.createElement("tr");
+    let name = document.createElement("td");
+    let missedVotes = document.createElement("td");
+    let tpcMissed = document.createElement("td");
+    let fullNameLink = document.createElement("a");
+
+    name.innerHTML =
+      (array[i].first_name || "") +
+      " " +
+      (array[i].last_name || "") +
+      " " +
+      (array[i].middle_name || "");
+
+    missedVotes.innerHTML = array[i].missed_votes;
+    tpcMissed.innerHTML = array[i].missed_votes_pct;
+
+    let ref = document.createAttribute("href");
+    ref.value = array[i].url;
+    fullNameLink.setAttributeNode(ref);
+    fullNameLink.setAttribute("target", "_blank");
+    name.append(fullNameLink);
+
+    tBodyId.append(hilera);
+    hilera.append(name, missedVotes, tpcMissed);
+  }
+}

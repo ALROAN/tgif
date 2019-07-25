@@ -881,7 +881,6 @@ function allSenatePages() {
           statistics.mostLoyal.push(sorted[j]);
         }
       }
-      console.log(statistics.mostLoyal);
     }
 
     findmostLoyal(members);
