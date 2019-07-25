@@ -92,7 +92,7 @@ function decideFetch(fetchUrl) {
 }
 
 // ----------------------FUNCTIONS-------------------------------
-//funcion desaparece el loader.
+//hace desaparecer el loader.
 function hideLoader() {
   document.getElementById("loader").style.display = "none";
 }
